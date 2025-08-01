@@ -1,0 +1,61 @@
+---
+import Layout from '@/layouts/Layout.astro';
+export const prerender = false;
+import { GET } from '@pages/api/links';
+const response = await GET(Astro);
+
+if (!response.ok) {
+	throw new Error(`Error fetching data: ${response.statusText}`);
+}
+const data = await response.json();
+if (!Array.isArray(data) || data.length === 0) {
+	throw new Error('No data found or invalid response format');
+}
+
+if ((data[0].url as string).startsWith('http'))
+	return Astro.redirect(data[0].url, 307);
+
+const { id } = Astro.params;
+---
+
+<Layout>
+	<main class="flex min-h-screen items-center justify-center">
+		<form
+			action={`/api/links`}
+			class="w-full max-w-sm p-6 space-y-4"
+			method="POST"
+		>
+			<div>
+				<label
+					for="password"
+					class="block text-sm font-medium"
+					>Password</label
+				>
+				<input
+					type="password"
+					id="password"
+					name="password"
+					required
+					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none"
+				/>
+				<label for="id"
+					><input
+						type="text"
+						name="id"
+						id="id"
+						hidden
+						value={id}
+					/></label
+				>
+			</div>
+			<button
+				type="submit"
+				class="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+			>
+				Unlock URL
+			</button>
+		</form>
+	</main>
+</Layout>
+
+<script></script>

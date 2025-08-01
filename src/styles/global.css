@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e1e;
+    --text: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --text: #000000;
+  }
+}
+
+html {
+  
+  background-color: var(--bg);
+  color: var(--text);
+}
+h1, h2, h3, h4, h5, h6, p{
+  text-wrap: pretty;
+}
+
+
+@utility status-warning {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-300;
+}
+
+@utility status-error {
+    @apply bg-red-100 text-red-800 border-red-300;
+}
