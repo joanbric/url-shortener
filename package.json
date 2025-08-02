@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "url-shortener",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -15,5 +15,9 @@
     "astro": "^5.12.0",
     "tailwindcss": "^4.1.11",
     "zod": "4.0.10"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.1.0"
   }
 }
