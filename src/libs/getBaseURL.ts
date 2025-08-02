@@ -4,4 +4,4 @@ const { PUBLIC_VERCEL_ENV, PUBLIC_VERCEL_PROJECT_PRODUCTION_URL } = import.meta
 export const BASE_URL =
 	PUBLIC_VERCEL_ENV === 'local'
 		? 'http://localhost:4321'
-		: `https://url.${PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`;
+		: `https://${PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`;
