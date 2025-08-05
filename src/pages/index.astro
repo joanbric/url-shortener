@@ -1,22 +1,18 @@
 ---
-import CloseIcon from '@/components/icons/CloseIcon.astro';
-import Layout from '../layouts/Layout.astro';
-import Copier from '@components/Copier.astro';
-import { menuItems } from '@libs/collections';
+import CloseIcon from '@/components/icons/CloseIcon.astro'
+import Layout from '../layouts/Layout.astro'
+import Copier from '@components/Copier.astro'
+import { menuItems } from '@libs/collections'
 
-import { BASE_URL } from '@libs/getBaseURL';
+import { BASE_URL } from '@libs/getBaseURL'
 ---
 
 <Layout>
 	<main class="min-h-dvh w-full max-w-5xl p-5 mx-auto">
-		<h1 class="text-3xl md:text-6xl my-15 font-sans font-bold text-center">
-			URL Shortener
-		</h1>
+		<h1 class="text-3xl md:text-6xl my-15 font-sans font-bold text-center">URL Shortener</h1>
 
 		<section class="mb-10">
-			<ul
-				class="flex md:flex-row flex-col gap-2 md:gap-1 items-center select-none"
-			>
+			<ul class="flex md:flex-row flex-col gap-2 md:gap-1 items-center select-none">
 				{
 					menuItems.map((item) => (
 						<li class="group flex">
@@ -27,10 +23,14 @@ import { BASE_URL } from '@libs/getBaseURL';
 								id={item.id}
 							/>
 							<label
-								class="text-sm rounded-lg md:group-not-first:rounded-l-none md:group-not-last:rounded-r-none border-2 text-blue-800 border-blue-600 px-4 py-1 font-bold transition-colors peer-checked:bg-blue-600 bg-white peer-checked:text-white text-nowrap"
+								class="text-sm flex gap-3 items-center rounded-lg md:group-not-first:rounded-l-none md:group-not-last:rounded-r-none border-2 text-blue-800 border-blue-600 px-4 py-1 font-bold transition-colors peer-checked:bg-blue-600 bg-white peer-checked:text-white text-nowrap"
 								for={item.id}
 							>
 								{item.label}
+								<div
+									id={`${item.id}-loader`}
+									class="w-4 h-4 hidden border-2 border-white border-l-transparent rounded-full animate-spin peer-checked:hidden"
+								/>
 							</label>
 						</li>
 					))
@@ -96,10 +96,9 @@ import { BASE_URL } from '@libs/getBaseURL';
 				id="statusMessage"
 				class="text-sm mt-2"
 			>
-				Please introduce a valid URL to shorten it. The URL must start with
-				"http://" or "https://". If you want to use a custom hash, please enter
-				it in the field above. If you want to use an authentication code, please
-				enter it in the field above.
+				Please introduce a valid URL to shorten it. The URL must start with "http://" or "https://". If you want to use
+				a custom hash, please enter it in the field above. If you want to use an authentication code, please enter it in
+				the field above.
 			</p>
 		</section>
 
@@ -110,9 +109,7 @@ import { BASE_URL } from '@libs/getBaseURL';
 		>
 			<p>
 				Your new shortened URL:
-				<div
-					class="border-2 border-gray-600 rounded p-3 w-full relative flex items-center justify-center gap-4"
-				>
+				<div class="border-2 border-gray-600 rounded p-3 w-full relative flex items-center justify-center gap-4">
 					<a
 						id="shortened-url"
 						class="text-blue-200 overflow-ellipsis overflow-hidden font-bold underline hover:cursor-pointer hover:text-blue-300"
@@ -130,12 +127,9 @@ import { BASE_URL } from '@libs/getBaseURL';
 
 		<section>
 			<p class="text-sm text-gray-400">
-				This is a simple URL shortener built with Astro and Turso. Enter a URL
-				above to shorten it.
+				This is a simple URL shortener built with Astro and Turso. Enter a URL above to shorten it.
 			</p>
-			<p class="text-sm text-gray-400 mt-2">
-				Note: The shortened URL will not be saved permanently in this demo.
-			</p>
+			<p class="text-sm text-gray-400 mt-2">Note: The shortened URL will not be saved permanently in this demo.</p>
 		</section>
 
 		<section class="last-links-container pb-10 w-full overflow-hidden hidden">
@@ -145,9 +139,7 @@ import { BASE_URL } from '@libs/getBaseURL';
 					<tr class="">
 						<th class="bg-sky-200 text-slate-700 w-[10%]">ID</th>
 						<th class="bg-sky-200 text-slate-700 w-[70%]">URL</th>
-						<th class="bg-sky-200 text-slate-700 w-[20%] hidden md:table-cell"
-							>Created At</th
-						>
+						<th class="bg-sky-200 text-slate-700 w-[20%] hidden md:table-cell">Created At</th>
 					</tr>
 				</thead>
 				<tbody id="last-shortened-urls">
@@ -196,79 +188,72 @@ import { BASE_URL } from '@libs/getBaseURL';
 </style>
 
 <script>
-	import { BASE_URL } from '@/libs/getBaseURL';
-import { menuItems } from '@libs/collections';
-	import { showStatusMessage } from '@libs/errorHandler';
+	import { BASE_URL } from '@/libs/getBaseURL'
+	import { menuItems } from '@libs/collections'
+	import { showStatusMessage } from '@libs/errorHandler'
 
 	if (!menuItems || !Array.isArray(menuItems)) {
-		throw new Error('Menu items are not defined or not an array');
+		throw new Error('Menu items are not defined or not an array')
 	}
-	const $useCustomHash = document.getElementById(
-		menuItems[0].id
-	) as HTMLInputElement;
-	const $useAuthCode = document.getElementById(
-		menuItems[1].id
-	) as HTMLInputElement;
-	const $showLinks = document.getElementById(
-		menuItems[2].id
-	) as HTMLInputElement;
+	const $useCustomHash = document.getElementById(menuItems[0].id) as HTMLInputElement
+	const $useAuthCode = document.getElementById(menuItems[1].id) as HTMLInputElement
+	const $showLinks = document.getElementById(menuItems[2].id) as HTMLInputElement
+	const $showLinksLoader = document.getElementById(`${menuItems[2].id}-loader`)
 
-	if (!$useCustomHash || !$useAuthCode || !$showLinks) {
-		throw new Error('Menu items not found in the DOM');
+	if (!$useCustomHash || !$useAuthCode || !$showLinks || !$showLinksLoader) {
+		throw new Error('Menu items not found in the DOM')
 	}
 
-	const $customHashContainer = document.querySelector('.custom-hash-container');
+	const $customHashContainer = document.querySelector('.custom-hash-container')
 	if (!$customHashContainer) {
-		throw new Error('Custom hash container not found');
+		throw new Error('Custom hash container not found')
 	}
 
 	$useCustomHash.addEventListener('change', (e) => {
 		if ($useCustomHash.checked) {
-			$customHashContainer.classList.remove('hidden');
+			$customHashContainer.classList.remove('hidden')
 		} else {
-			$customHashContainer.classList.add('hidden');
+			$customHashContainer.classList.add('hidden')
 		}
-	});
+	})
 
-	const $authCodeContainer = document.querySelector('.auth-code-container');
+	const $authCodeContainer = document.querySelector('.auth-code-container')
 	if (!$authCodeContainer) {
-		throw new Error('Authentication code container not found');
+		throw new Error('Authentication code container not found')
 	}
 	$useAuthCode.addEventListener('change', (e) => {
 		if ($useAuthCode.checked) {
-			$authCodeContainer.classList.remove('hidden');
+			$authCodeContainer.classList.remove('hidden')
 		} else {
-			$authCodeContainer.classList.add('hidden');
+			$authCodeContainer.classList.add('hidden')
 		}
-	});
+	})
 
-	const $lastShortenedUrls = document.getElementById('last-shortened-urls');
-	const $lastShortenedUrlsContainer = document.querySelector(
-		'section.last-links-container'
-	);
+	const $lastShortenedUrls = document.getElementById('last-shortened-urls')
+	const $lastShortenedUrlsContainer = document.querySelector('section.last-links-container')
 	if (!$lastShortenedUrls || !$lastShortenedUrlsContainer) {
-		throw new Error('Last shortened URLs section not found');
+		throw new Error('Last shortened URLs section not found')
 	}
 
-	let areLastShortenedUrlsLoaded = false;
+	let areLastShortenedUrlsLoaded = false
 
 	$showLinks.addEventListener('change', async (e) => {
 		if ($showLinks.checked) {
-			$lastShortenedUrlsContainer.classList.remove('hidden');
-			if (areLastShortenedUrlsLoaded) return;
+			$showLinksLoader.classList.remove('hidden')
+			if (areLastShortenedUrlsLoaded) {
+				$lastShortenedUrlsContainer.classList.remove('hidden')
+				return
+			}
 			try {
-				const res = await fetch('/api/links');
-				if (!res.ok)
-					throw new Error(
-						`Error fetching last shortened URLs: ${await res.json()}`
-					);
+				const res = await fetch('/api/links')
+				if (!res.ok) throw new Error(`Error fetching last shortened URLs: ${await res.json()}`)
 
-				const data = await res.json();
-				if (!Array.isArray(data)) throw new Error('Invalid response format');
+				const data = await res.json()
+				if (!Array.isArray(data)) throw new Error('Invalid response format')
 
 				if (data.length === 0) {
-					$lastShortenedUrlsContainer.classList.add('hidden');
-					return;
+					$lastShortenedUrlsContainer.classList.add('hidden')
+					return
 				}
 
 				$lastShortenedUrls.innerHTML = data
@@ -279,36 +264,32 @@ import { menuItems } from '@libs/collections';
           <td class="hidden md:table-cell">${new Date(url.createdAt).toLocaleString()}</td>
           </tr>`
 					)
-					.join('');
-				areLastShortenedUrlsLoaded = true;
+					.join('')
+				areLastShortenedUrlsLoaded = true
+				$lastShortenedUrlsContainer.classList.remove('hidden')
 			} catch (err) {
-				const error =
-					err instanceof Error
-						? JSON.parse(err.message)
-						: { code: 500, message: 'Unknown error' };
-				showStatusMessage(
-					500,
-					error instanceof Error ? error.message : 'Unknown error',
-					'error'
-				);
+				const error = err instanceof Error ? JSON.parse(err.message) : { code: 500, message: 'Unknown error' }
+				showStatusMessage(500, error instanceof Error ? error.message : 'Unknown error', 'error')
+			} finally {
+				$showLinksLoader.classList.add('hidden')
 			}
 		} else {
-			$lastShortenedUrlsContainer.classList.add('hidden');
+			$lastShortenedUrlsContainer.classList.add('hidden')
 		}
-	});
+	})
 </script>
 
 <script>
-	import { showStatusMessage } from '@libs/errorHandler';
+	import { showStatusMessage } from '@libs/errorHandler'
 
-	const form = document.querySelector('form');
-	if (!form) throw new Error('Form not found');
+	const form = document.querySelector('form')
+	if (!form) throw new Error('Form not found')
 
 	form.addEventListener('submit', async (e) => {
-		e.preventDefault();
-		const url = form.url.value;
-		const customHash = form.customHash.value;
-		const authCode = form.authCode.value;
+		e.preventDefault()
+		const url = form.url.value
+		const customHash = form.customHash.value
+		const authCode = form.authCode.value
 
 		try {
 			const res = await fetch(`/api/shortener`, {
@@ -317,41 +298,35 @@ import { menuItems } from '@libs/collections';
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({ url, customHash, authCode })
-			});
+			})
 			if (!res.ok) {
 				throw new Error(
 					JSON.stringify({
 						code: res.status,
 						message: `Error shortening URL: ${await res.json()}`
 					})
-				);
+				)
 			}
-			const data = await res.json();
-			if (!data.shortenedUrl)
-				throw new Error('Shortened URL not found in response');
+			const data = await res.json()
+			if (!data.shortenedUrl) throw new Error('Shortened URL not found in response')
 
-			const shortenedUrl = document.getElementById(
-				'shortened-url'
-			) as HTMLAnchorElement;
-			if (!shortenedUrl) throw new Error('Shortened URL element not found');
+			const shortenedUrl = document.getElementById('shortened-url') as HTMLAnchorElement
+			if (!shortenedUrl) throw new Error('Shortened URL element not found')
 
-			const resultSection = document.getElementById('result');
-			if (!resultSection) throw new Error('Result section not found');
+			const resultSection = document.getElementById('result')
+			if (!resultSection) throw new Error('Result section not found')
 
-			shortenedUrl.textContent = data.shortenedUrl;
-			shortenedUrl.href = data.shortenedUrl;
-			resultSection.classList.remove('invisible');
+			shortenedUrl.textContent = data.shortenedUrl
+			shortenedUrl.href = data.shortenedUrl
+			resultSection.classList.remove('invisible')
 
-			const btnCopier = document.getElementById('copier') as HTMLButtonElement;
-			if (!btnCopier) throw new Error('Copy button not found');
-			btnCopier.dataset.url = data.shortenedUrl;
+			const btnCopier = document.getElementById('copier') as HTMLButtonElement
+			if (!btnCopier) throw new Error('Copy button not found')
+			btnCopier.dataset.url = data.shortenedUrl
 		} catch (err) {
-			const error =
-				err instanceof Error
-					? JSON.parse(err.message)
-					: { code: 500, message: 'Unknown error' };
+			const error = err instanceof Error ? JSON.parse(err.message) : { code: 500, message: 'Unknown error' }
 
-			showStatusMessage(error.code, error.message, 'error');
+			showStatusMessage(error.code, error.message, 'error')
 		}
-	});
+	})
 </script>
